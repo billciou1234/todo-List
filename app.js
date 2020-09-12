@@ -2,7 +2,7 @@
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
-
+const Todo = require('./models/todo')
 const exphbs = require('express-handlebars')
 
 mongoose.connect('mongodb://localhost/todo-list', { useNewUrlParser: true, useUnifiedTopology: true })
@@ -22,7 +22,12 @@ app.set('view engine', 'hbs')
 
 // 設定首頁路由
 app.get('/', (req, res) => {
-  res.render('index')
+  Todo.find()
+    .lean()
+    .then(todos => res.render('index', { todos: todos }))
+    .catch(error => console.error(error))
+
+
 })
 
 // 設定 port 3000
