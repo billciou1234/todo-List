@@ -7,6 +7,8 @@ const bodyParser = require('body-parser')
 // 載入 method-override
 const methodOverride = require('method-override')
 
+const routes = require('./routes')
+const router = require('./routes')
 const app = express()
 mongoose.connect('mongodb://localhost/todo-list', { useNewUrlParser: true, useUnifiedTopology: true })
 
@@ -24,63 +26,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // 設定每一筆請求都會透過 methodOverride 進行前置處理
 app.use(methodOverride('_method'))
 
+
+
+
 // 設定首頁路由
-app.get('/', (req, res) => {
-  Todo.find()
-    .lean().sort({ _id: 'asc' })
-    .then(todos => res.render('index', { todos: todos }))
-    .catch(error => console.error(error))
-})
+app.ues(routes)
 
-app.get('/todos/new', (req, res) => {
-  return res.render('new')
-})
 
-app.post('/todos', (req, res) => {
-  const name = req.body.name
-
-  const todo = new Todo({ name })
-  return todo.save()
-    .then(() => res.redirect('/'))
-    .catch(error => console.log(error))
-})
-
-app.get('/todos/:id', (req, res) => {
-  const id = req.params.id
-  return Todo.findById(id).lean().then(todo => res.render('detail', { todo: todo }))
-    .catch(error => console.log(error))
-})
-
-app.get('/todos/:id/edit', (req, res) => {
-  const id = req.params.id
-  return Todo.findById(id).lean().then(todo => res.render('edit', { todo: todo }))
-    .catch(error => console.log(error))
-})
-
-app.put('/todos/:id', (req, res) => {
-  const id = req.params.id
-  const name = req.body.name
-  const isDone = req.body.isDone
-  return Todo.findById(id).then(todo => {
-    todo.name = name
-    todo.isDone = isDone === 'on'
-    // if (isDone === 'on') {
-    //   todo.isDone = true
-    // } else {
-    //   todo.isDone = false
-    // }
-    return todo.save()
-  })
-    .then(() => res.redirect(`/todos/${id}`))
-    .catch(error => console.log(error))
-})
-
-app.delete('/todos/:id', (req, res) => {
-  const id = req.params.id
-  return Todo.findById(id).then(todo => todo.remove())
-    .then(() => res.redirect('/'))
-    .catch(error => console.log(error))
-})
 
 
 
