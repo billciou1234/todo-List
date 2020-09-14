@@ -4,6 +4,9 @@ const mongoose = require('mongoose')
 const Todo = require('./models/todo')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+// 載入 method-override
+const methodOverride = require('method-override')
+
 const app = express()
 mongoose.connect('mongodb://localhost/todo-list', { useNewUrlParser: true, useUnifiedTopology: true })
 
@@ -18,7 +21,8 @@ db.once('open', () => {
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
-
+// 設定每一筆請求都會透過 methodOverride 進行前置處理
+app.use(methodOverride('_method'))
 
 // 設定首頁路由
 app.get('/', (req, res) => {
@@ -53,7 +57,7 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-app.post('/todos/:id/edit', (req, res) => {
+app.put('/todos/:id', (req, res) => {
   const id = req.params.id
   const name = req.body.name
   const isDone = req.body.isDone
@@ -71,7 +75,7 @@ app.post('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-app.post('/todos/:id/delete', (req, res) => {
+app.delete('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findById(id).then(todo => todo.remove())
     .then(() => res.redirect('/'))
