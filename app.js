@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 // 設定首頁路由
 app.get('/', (req, res) => {
   Todo.find()
-    .lean()
+    .lean().sort({ _id: 'asc' })
     .then(todos => res.render('index', { todos: todos }))
     .catch(error => console.error(error))
 })
