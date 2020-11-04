@@ -6,6 +6,7 @@ const methodOverride = require('method-override')
 const routes = require('./routes')
 const app = express()
 const session = require('express-session')
+const usePassport = require('./config/passport')
 require('./config/mongoose')
 
 
@@ -19,6 +20,9 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
+
+usePassport(app)
+
 // 設定首頁路由
 app.use(routes)
 // 設定 port 3000
