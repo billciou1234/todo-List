@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const routes = require('./routes')
 const app = express()
+const session = require('express-session')
 require('./config/mongoose')
 
 
@@ -13,6 +14,11 @@ app.set('view engine', 'hbs')
 app.use(bodyParser.urlencoded({ extended: true }))
 // 設定每一筆請求都會透過 methodOverride 進行前置處理
 app.use(methodOverride('_method'))
+app.use(session({
+  secret: "ThisIsMySecret",
+  resave: false,
+  saveUninitialized: true
+}))
 // 設定首頁路由
 app.use(routes)
 // 設定 port 3000
