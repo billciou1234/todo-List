@@ -21,41 +21,60 @@ router.post('/register', (req, res) => {
   // const email = req.body.email
   // const password = req.body.password
   // const confirmPassword = req.body.confirmPassword
+  const errors = []
   const { name, email, password, confirmPassword } = req.body
+
+  if (!name || !email || !password || !confirmPassword) {
+    errors.push({ message: '所有欄位都是必填的。' })
+  }
+  if (password !== confirmPassword) {
+    errors.push({ message: '密碼與確認密碼不相符!' })
+  }
+  if (errors.length) {
+    return res.render('register', {
+      errors,
+      name,
+      email,
+      password,
+      confirmPassword
+    })
+  }
 
   User.findOne({ email }).then(user => {
     if (user) {
-      console.log('User already exists.')
-      req.render('register', {
+      errors.push({ message: '這個 Email 已經註冊過了。' })
+      return req.render('register', {
+        errors,
         name,
         email,
         password,
         confirmPassword
       })
-    } else {
-      //同樣功能，較簡短
-      return User.create({
-        name,
-        email,
-        password
-      })
-        .then(() => res.redirect('/'))
-        .catch(err => console.log(err))
-      // const newUser = new User({
-      //   name,
-      //   email,
-      //   password
-      // })
-      // newUser.save().then(() => res.render('/')).catch(err => console.log(err))
-
-
     }
+    //同樣功能，較簡短
+    return User.create({
+      name,
+      email,
+      password
+    })
+      .then(() => res.redirect('/'))
+      .catch(err => console.log(err))
+    // const newUser = new User({
+    //   name,
+    //   email,
+    //   password
+    // })
+    // newUser.save().then(() => res.render('/')).catch(err => console.log(err))
+
+
+
   })
 })
 
 
 router.get('/logout', (req, res) => {
   req.logout()
+  req.flash('success_msg', '你已經成功登出!')
   res.redirect('/users/login')
 })
 
