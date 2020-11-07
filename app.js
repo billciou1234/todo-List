@@ -23,6 +23,12 @@ app.use(session({
 
 usePassport(app)
 
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated()
+  res.locals.user = req.user
+  next()
+})
+
 // 設定首頁路由
 app.use(routes)
 // 設定 port 3000
