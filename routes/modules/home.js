@@ -4,17 +4,9 @@ const Todo = require('../../models/todo')
 
 
 router.get('/', (req, res) => {
-  let dt = new Date
-  let DateTime = `${dt.getFullYear()}/${dt.getMonth() + 1}/${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`
+  const userId = req.user._id
 
-  if (temptime === 0) {
-    console.log(DateTime + ' | ' + req.method + ' from ' + req.originalUrl)
-  } else {
-    console.log(DateTime + ' | ' + req.method + ' from ' + req.originalUrl + ' | ues time:' + (dt - temptime) + 'ms')
-  }
-
-
-  Todo.find()
+  Todo.find({ userId: userId })
     .lean().sort({ _id: 'asc' })
     .then(todos => res.render('index', { todos: todos }))
     .catch(error => console.error(error))
