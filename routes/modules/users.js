@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const passport = require('passport')
 const User = require('../../models/user')
+const bcrybt = require('bcryptjs')
 
 router.get('/login', (req, res) => {
   res.render('login')
@@ -51,12 +52,14 @@ router.post('/register', (req, res) => {
         confirmPassword
       })
     }
-    //同樣功能，較簡短
-    return User.create({
-      name,
-      email,
-      password
-    })
+    return bcrybt
+      .genSalt(10)
+      .then(salt => bcrybt.hash(password, salt))
+      .then(hash => User.create({
+        name,
+        email,
+        password: hash
+      }))
       .then(() => res.redirect('/'))
       .catch(err => console.log(err))
     // const newUser = new User({
