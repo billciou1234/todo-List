@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const passport = require('passport')
-const User = require('../../models/user')
 const bcrybt = require('bcryptjs')
+const User = require('../../models/user')
 
 router.get('/login', (req, res) => {
   res.render('login')
@@ -10,7 +10,7 @@ router.get('/login', (req, res) => {
 
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
-  failureRedirect: 'user/login'
+  failureRedirect: '/users/login'
 }))
 
 router.get('/register', (req, res) => {
@@ -53,12 +53,12 @@ router.post('/register', (req, res) => {
       })
     }
     return bcrybt
-      .genSalt(10)
-      .then(salt => bcrybt.hash(password, salt))
+      .genSalt(10) // 產生「鹽」，並設定複雜度係數為 10
+      .then(salt => bcrybt.hash(password, salt)) // 為使用者密碼「加鹽」，產生雜湊值
       .then(hash => User.create({
         name,
         email,
-        password: hash
+        password: hash // 用雜湊值取得原本的使用者密碼
       }))
       .then(() => res.redirect('/'))
       .catch(err => console.log(err))
