@@ -8,10 +8,10 @@ const flash = require('connect-flash')
 const routes = require('./routes')
 const usePassport = require('./config/passport')
 
-require('dotenv').config()
+require('./config/mongoose')
 
 if (process.env.NODE_ENV !== 'production') {
-  require('./config/mongoose')
+  require('dotenv').config()
 }
 const app = express()
 const PORT = process.env.PORT
